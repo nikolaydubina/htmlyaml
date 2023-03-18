@@ -13,19 +13,22 @@ func BoolHTML(k string, v bool) string {
 }
 
 func StringHTML(k string, v string) string {
-	return `<div class="yaml-value yaml-string">"` + v + `"</div>`
+	return `<div class="yaml-value yaml-string">` + v + `</div>`
 }
 
 func NumberHTML(k string, v float64, s string) string {
 	return `<div class="yaml-value yaml-number">` + s + `</div>`
 }
 
-var DefaultArrayDashHTML = `<div class="yaml-lang">&nbsp-&nbsp</div>`
-
-var DefaultMapColonHTML = `<div class="yaml-lang">:</div>`
+var (
+	DefaultArrayDashHTML  = `<div class="yaml-lang">&nbsp-&nbsp</div>`
+	DefaultArrayEmptyHTML = `<div class="yaml-lang">&nbsp[]</div>`
+	DefaultMapColonHTML   = `<div class="yaml-lang">:&nbsp</div>`
+	DefaultMapEmptyHTML   = `<div class="yaml-lang">&nbsp{}</div>`
+)
 
 func DefaultMapKeyHTML(key string, v string) string {
-	return `<div class="yaml-key yaml-string">"` + v + `"</div>`
+	return `<div class="yaml-key yaml-string">` + v + `</div>`
 }
 
 type DefaultRowHTML struct {
@@ -33,18 +36,20 @@ type DefaultRowHTML struct {
 }
 
 func (s DefaultRowHTML) Marshal(v string, depth int) string {
-	p := `<div class="yaml-container-padding">` + strings.Repeat("&nbsp", s.Padding*2*depth) + `</div>`
+	p := `<div class="yaml-container-padding">` + strings.Repeat("&nbsp", s.Padding*depth) + `</div>`
 	return `<div class="yaml-container-row">` + p + v + `</div>`
 }
 
 // DefaultMarshaler adds basic HTML div classes for further styling.
 var DefaultMarshaler = Marshaler{
-	Null:      NullHTML,
-	Bool:      BoolHTML,
-	String:    StringHTML,
-	Number:    NumberHTML,
-	ArrayDash: DefaultArrayDashHTML,
-	MapKey:    DefaultMapKeyHTML,
-	MapColon:  DefaultMapColonHTML,
-	Row:       DefaultRowHTML{Padding: 4}.Marshal,
+	Null:       NullHTML,
+	Bool:       BoolHTML,
+	String:     StringHTML,
+	Number:     NumberHTML,
+	MapKey:     DefaultMapKeyHTML,
+	ArrayDash:  DefaultArrayDashHTML,
+	ArrayEmpty: DefaultArrayEmptyHTML,
+	MapColon:   DefaultMapColonHTML,
+	MapEmpty:   DefaultMapEmptyHTML,
+	Row:        DefaultRowHTML{Padding: 4}.Marshal,
 }

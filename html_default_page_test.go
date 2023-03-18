@@ -32,23 +32,15 @@ func TestMarshalHTML_Color(t *testing.T) {
 	var v any
 	json.Unmarshal(exampleJSON, &v)
 
-	s := htmlyaml.Marshaler{
-		Null:   htmlyaml.NullHTML,
-		Bool:   htmlyaml.BoolHTML,
-		String: htmlyaml.StringHTML,
-		Number: func(k string, v float64, s string) string {
-			if k == "$.cakes.strawberry-cake.size" {
-				return `<div class="json-value json-number" style="color:red;">` + s + `</div>`
-			}
-			if v > 10 {
-				return `<div class="json-value json-number" style="color:blue;">` + s + `</div>`
-			}
-			return `<div class="json-value json-number">` + s + `</div>`
-		},
-		ArrayDash: htmlyaml.DefaultArrayDashHTML,
-		MapKey:    htmlyaml.DefaultMapKeyHTML,
-		MapColon:  htmlyaml.DefaultMapColonHTML,
-		Row:       htmlyaml.DefaultRowHTML{Padding: 4}.Marshal,
+	s := htmlyaml.DefaultMarshaler
+	s.Number = func(k string, v float64, s string) string {
+		if k == "$.cakes.strawberry-cake.size" {
+			return `<div class="yaml-value yaml-number" style="color:red;">` + s + `</div>`
+		}
+		if v > 10 {
+			return `<div class="yaml-value yaml-number" style="color:blue;">` + s + `</div>`
+		}
+		return `<div class="yaml-value yaml-number">` + s + `</div>`
 	}
 
 	m := htmlyaml.DefaultPageMarshaler

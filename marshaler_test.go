@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/nikolaydubina/htmlyaml"
@@ -25,7 +26,7 @@ func TestDefaultMarshaler(t *testing.T) {
 	h := htmlyaml.DefaultMarshaler.Marshal(v)
 
 	os.WriteFile("testdata/example.out.html", h, 0666)
-	if exampleHTML != string(h) {
+	if strings.TrimSpace(exampleHTML) != strings.TrimSpace(string(h)) {
 		t.Errorf("wrong output: %s", string(h))
 	}
 }
@@ -38,7 +39,7 @@ func TestDefaultMarshaler_Repeated(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		h := s.Marshal(v)
-		if exampleHTML != string(h) {
+		if strings.TrimSpace(exampleHTML) != strings.TrimSpace(string(h)) {
 			t.Errorf("%d: wrong output: %s", i, string(h))
 		}
 	}
@@ -50,13 +51,15 @@ func TestMarshaler_JSONPath(t *testing.T) {
 
 	j := htmlyaml.NewJSONPathCollector()
 	s := htmlyaml.Marshaler{
-		Null:      j.Null,
-		Bool:      j.Bool,
-		String:    j.String,
-		Number:    j.Number,
-		MapKey:    j.MapKey,
-		ArrayDash: htmlyaml.DefaultArrayDashHTML,
-		Row:       htmlyaml.DefaultRowHTML{Padding: 4}.Marshal,
+		Null:       j.Null,
+		Bool:       j.Bool,
+		String:     j.String,
+		Number:     j.Number,
+		MapKey:     j.MapKey,
+		MapEmpty:   htmlyaml.DefaultMapEmptyHTML,
+		ArrayDash:  htmlyaml.DefaultArrayDashHTML,
+		ArrayEmpty: htmlyaml.DefaultArrayEmptyHTML,
+		Row:        htmlyaml.DefaultRowHTML{Padding: 1}.Marshal,
 	}
 
 	s.Marshal(v)
