@@ -14,7 +14,7 @@ import (
 // This facilitates CSS styling, CSS animations, and JavaScript events.
 // YAML element renderers receive JSON Path and value of element.
 // Should be used only for types: bool, float64, string, []any, map[string]any, nil.
-// You can get allowed input easily with yaml.Unmarshal to any.
+// You can get allowed input easily with yaml.Unmarshal or json.Unmarshal to any.
 // Safe for repeated use.
 // Not safe for concurrent use.
 // TODO: string quotation check for whitespace inside strings
@@ -32,9 +32,10 @@ type Marshaler struct {
 	Row        func(s string, padding int) string
 
 	*rowWriter
-	depth int
-	key   string
-	err   []error
+	depth        int
+	isParentList bool
+	key          string
+	err          []error
 }
 
 // Marshaler converts YAML stored as Go `any` object represented into HTML.
@@ -107,11 +108,13 @@ func (s *Marshaler) encodeArray(v []any) {
 	}
 
 	// write array
-	k, d := s.key, s.depth
-	defer func() { s.key, s.depth = k, d }()
+	k, d, pl := s.key, s.depth, s.isParentList
+	defer func() { s.key, s.depth, s.isParentList = k, d, pl }()
+
 	s.flush(s.depth)
 
 	s.depth = d + 1
+	s.isParentList = true
 	for i, q := range v {
 		s.key = k + "[" + strconv.Itoa(i) + "]"
 
@@ -120,7 +123,6 @@ func (s *Marshaler) encodeArray(v []any) {
 	}
 }
 
-// TODO: anonymous map starts same line first key
 func (s *Marshaler) encodeMap(v map[string]any) {
 	if len(v) == 0 {
 		s.write(s.MapEmpty)
@@ -143,10 +145,16 @@ func (s *Marshaler) encodeMap(v map[string]any) {
 	k, d := s.key, s.depth
 	defer func() { s.key, s.depth = k, d }()
 
-	s.flush(s.depth)
+	if !s.isParentList {
+		s.flush(s.depth)
+	}
 
-	s.depth = d + 1
-	for _, kv := range sv {
+	// TODO: some issue with array of structs is not padding correctly due to HTML whitespace reduction
+	for i, kv := range sv {
+		if (s.isParentList && i > 0) || !s.isParentList {
+			s.depth = d + 1
+		}
+
 		s.key = k + "." + kv.k
 
 		// key

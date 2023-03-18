@@ -35,6 +35,16 @@
         "red",
         "green"
     ],
+    "box-with-boxes": [
+        [],
+        [
+            [],
+            [],
+            [
+                2
+            ]
+        ]
+    ],
     "bookings": {
         "monday": true,
         "tuesday": false

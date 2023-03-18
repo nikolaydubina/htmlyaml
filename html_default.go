@@ -21,10 +21,10 @@ func NumberHTML(k string, v float64, s string) string {
 }
 
 var (
-	DefaultArrayDashHTML  = `<div class="yaml-lang">&nbsp-&nbsp</div>`
-	DefaultArrayEmptyHTML = `<div class="yaml-lang">&nbsp[]</div>`
-	DefaultMapColonHTML   = `<div class="yaml-lang">:&nbsp</div>`
-	DefaultMapEmptyHTML   = `<div class="yaml-lang">&nbsp{}</div>`
+	DefaultArrayDashHTML  = `<div class="yaml-lang">&nbsp;-&nbsp;</div>`
+	DefaultArrayEmptyHTML = `<div class="yaml-lang">&nbsp;[]</div>`
+	DefaultMapColonHTML   = `<div class="yaml-lang">:&nbsp;</div>`
+	DefaultMapEmptyHTML   = `<div class="yaml-lang">&nbsp;{}</div>`
 )
 
 func DefaultMapKeyHTML(key string, v string) string {
@@ -36,7 +36,7 @@ type DefaultRowHTML struct {
 }
 
 func (s DefaultRowHTML) Marshal(v string, depth int) string {
-	p := `<div class="yaml-container-padding">` + strings.Repeat("&nbsp", s.Padding*depth) + `</div>`
+	p := `<span class="yaml-container-padding">` + strings.Repeat("&nbsp;", s.Padding*depth) + `</span>`
 	return `<div class="yaml-container-row">` + p + v + `</div>`
 }
 
@@ -51,5 +51,5 @@ var DefaultMarshaler = Marshaler{
 	ArrayEmpty: DefaultArrayEmptyHTML,
 	MapColon:   DefaultMapColonHTML,
 	MapEmpty:   DefaultMapEmptyHTML,
-	Row:        DefaultRowHTML{Padding: 4}.Marshal,
+	Row:        DefaultRowHTML{Padding: 2}.Marshal,
 }

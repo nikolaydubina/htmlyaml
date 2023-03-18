@@ -73,6 +73,9 @@ func TestMarshaler_JSONPath(t *testing.T) {
 		kvs = append(kvs, kv{k: k, v: v})
 	}
 	sort.Slice(kvs, func(i, j int) bool { return kvs[i].k < kvs[j].k })
+	for _, k := range kvs {
+		t.Log(k)
+	}
 
 	exp := []kv{
 		{k: "$.bookings", v: "bookings"},
@@ -85,6 +88,8 @@ func TestMarshaler_JSONPath(t *testing.T) {
 		{k: "$.box-sizes[0]", v: "10"},
 		{k: "$.box-sizes[1]", v: "11"},
 		{k: "$.box-sizes[2]", v: "12"},
+		{k: "$.box-with-boxes", v: "box-with-boxes"},
+		{k: "$.box-with-boxes[1][2][0]", v: "2"},
 		{k: "$.cakes", v: "cakes"},
 		{k: "$.cakes.chocolate-cake", v: "chocolate-cake"},
 		{k: "$.cakes.strawberry-cake", v: "strawberry-cake"},
