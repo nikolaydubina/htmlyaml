@@ -1,4 +1,4 @@
-## 🍒 htmlyaml: rich rendering of YAML as HTML in Go
+## htmlyaml: rich rendering of YAML as HTML in Go
 
 [![codecov](https://codecov.io/gh/nikolaydubina/htmlyaml/branch/master/graph/badge.svg?token=yXmNdIDn8O)](https://codecov.io/gh/nikolaydubina/htmlyaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nikolaydubina/htmlyaml)](https://goreportcard.com/report/github.com/nikolaydubina/htmlyaml)
