@@ -21,7 +21,7 @@ func NumberHTML(k string, v float64, s string) string {
 }
 
 var (
-	DefaultArrayDashHTML  = `<div class="yaml-lang">&nbsp;-&nbsp;</div>`
+	DefaultArrayDashHTML  = `<div class="yaml-lang">-&nbsp;</div>`
 	DefaultArrayEmptyHTML = `<div class="yaml-lang">&nbsp;[]</div>`
 	DefaultMapColonHTML   = `<div class="yaml-lang">:&nbsp;</div>`
 	DefaultMapEmptyHTML   = `<div class="yaml-lang">&nbsp;{}</div>`
@@ -35,8 +35,10 @@ type DefaultRowHTML struct {
 	Padding int
 }
 
+var PaddingSpace = `<span class="yaml-padding-space">&nbsp;</span>`
+
 func (s DefaultRowHTML) Marshal(v string, depth int) string {
-	p := `<span class="yaml-container-padding">` + strings.Repeat("&nbsp;", s.Padding*depth) + `</span>`
+	p := `<div class="yaml-container-padding">` + strings.Repeat(PaddingSpace, s.Padding*depth) + `</div>`
 	return `<div class="yaml-container-row">` + p + v + `</div>`
 }
 

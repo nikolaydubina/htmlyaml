@@ -15,6 +15,8 @@ import (
 // YAML element renderers receive JSON Path and value of element.
 // Should be used only for types: bool, float64, string, []any, map[string]any, nil.
 // You can get allowed input easily with yaml.Unmarshal or json.Unmarshal to any.
+// Since HTML automatically removes whitespace, to make indentation YAML conformant,
+// spaces are wrapped in their own div element.
 // Safe for repeated use.
 // Not safe for concurrent use.
 // TODO: string quotation check for whitespace inside strings
@@ -62,41 +64,24 @@ func (s *Marshaler) MarshalTo(w io.Writer, v any) error {
 
 func (s *Marshaler) marshal(v any) {
 	if v == nil {
-		s.encodeNull()
+		s.write(s.Null(s.key))
 	}
 	switch q := v.(type) {
 	case bool:
-		s.encodeBool(q)
+		s.write(s.Bool(s.key, q))
 	case string:
-		s.encodeString(q)
+		s.write(s.String(s.key, q))
 	case float64:
-		s.encodeFloat64(q)
+		s.write(s.Number(s.key, q, strconv.FormatFloat(q, 'f', -1, 64)))
 	case map[string]any:
 		s.encodeMap(q)
+		return
 	case []any:
 		s.encodeArray(q)
+		return
 	default:
 		s.err = append(s.err, errors.New("skip unsupported type at key("+s.key+")"))
 	}
-}
-
-func (s *Marshaler) encodeNull() {
-	s.write(s.Null(s.key))
-	s.flush(s.depth)
-}
-
-func (s *Marshaler) encodeBool(v bool) {
-	s.write(s.Bool(s.key, v))
-	s.flush(s.depth)
-}
-
-func (s *Marshaler) encodeString(v string) {
-	s.write(s.String(s.key, v))
-	s.flush(s.depth)
-}
-
-func (s *Marshaler) encodeFloat64(v float64) {
-	s.write(s.Number(s.key, v, strconv.FormatFloat(v, 'f', -1, 64)))
 	s.flush(s.depth)
 }
 
@@ -117,7 +102,6 @@ func (s *Marshaler) encodeArray(v []any) {
 	s.isParentList = true
 	for i, q := range v {
 		s.key = k + "[" + strconv.Itoa(i) + "]"
-
 		s.write(s.ArrayDash)
 		s.marshal(q)
 	}
@@ -149,15 +133,13 @@ func (s *Marshaler) encodeMap(v map[string]any) {
 		s.flush(s.depth)
 	}
 
-	// TODO: some issue with array of structs is not padding correctly due to HTML whitespace reduction
 	for i, kv := range sv {
 		if (s.isParentList && i > 0) || !s.isParentList {
 			s.depth = d + 1
 		}
 
-		s.key = k + "." + kv.k
-
 		// key
+		s.key = k + "." + kv.k
 		s.write(s.MapKey(s.key, kv.k))
 		s.write(s.MapColon)
 
