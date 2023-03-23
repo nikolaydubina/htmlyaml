@@ -34,10 +34,11 @@ func DefaultMapKey(key string, v string) string {
 
 type DefaultRow struct {
 	Padding int
+	Space   string
 }
 
 func (s DefaultRow) Marshal(v string, depth int) string {
-	p := `<div class="yaml-container-padding">` + strings.Repeat(DefaultPaddingSpace, s.Padding*depth) + `</div>`
+	p := `<div class="yaml-container-padding">` + strings.Repeat(s.Space, s.Padding*depth) + `</div>`
 	return `<div class="yaml-container-row">` + p + v + `</div>`
 }
 
@@ -52,5 +53,5 @@ var DefaultMarshaler = Marshaler{
 	ArrayEmpty: DefaultArrayEmpty,
 	MapColon:   DefaultMapColon,
 	MapEmpty:   DefaultMapEmpty,
-	Row:        DefaultRow{Padding: 2}.Marshal,
+	Row:        DefaultRow{Padding: 2, Space: DefaultPaddingSpace}.Marshal,
 }
