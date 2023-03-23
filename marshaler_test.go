@@ -50,17 +50,12 @@ func TestMarshaler_JSONPath(t *testing.T) {
 	json.Unmarshal(exampleJSON, &v)
 
 	j := htmlyaml.NewJSONPathCollector()
-	s := htmlyaml.Marshaler{
-		Null:       j.Null,
-		Bool:       j.Bool,
-		String:     j.String,
-		Number:     j.Number,
-		MapKey:     j.MapKey,
-		MapEmpty:   htmlyaml.DefaultMapEmptyHTML,
-		ArrayDash:  htmlyaml.DefaultArrayDashHTML,
-		ArrayEmpty: htmlyaml.DefaultArrayEmptyHTML,
-		Row:        htmlyaml.DefaultRowHTML{Padding: 1}.Marshal,
-	}
+	s := htmlyaml.DefaultMarshaler
+	s.Null = j.Null
+	s.Bool = j.Bool
+	s.String = j.String
+	s.Number = j.Number
+	s.MapKey = j.MapKey
 
 	s.Marshal(v)
 

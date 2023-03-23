@@ -29,22 +29,15 @@ var v any
 yaml.Unmarshal(exampleYAML, &v)
 
 // customize how to render HTML elements
-s := htmlyaml.Marshaler{
-    Null:   htmlyaml.NullHTML,
-    Bool:   htmlyaml.BoolHTML,
-    String: htmlyaml.StringHTML,
-    Number: func(k string, v float64, s string) string {
-        if k == "$.cakes.strawberry-cake.size" {
-            return `<div class="yaml-value yaml-number" style="color:red;">` + s + `</div>`
-        }
-        if v > 10 {
-            return `<div class="yaml-value yaml-number" style="color:blue;">` + s + `</div>`
-        }
-        return `<div class="yaml-value yaml-number">` + s + `</div>`
-    },
-    Array: htmlyaml.DefaultArrayHTML,
-    Map:   htmlyaml.DefaultMapHTML,
-    Row:   htmlyaml.DefaultRowHTML{Padding: 4}.Marshal,
+s := htmlyaml.DefaultMarshaler
+s.Number = func(k string, v float64, s string) string {
+    if k == "$.cakes.strawberry-cake.size" {
+        return `<div class="yaml-value yaml-number" style="color:red;">` + s + `</div>`
+    }
+    if v > 10 {
+        return `<div class="yaml-value yaml-number" style="color:blue;">` + s + `</div>`
+    }
+    return `<div class="yaml-value yaml-number">` + s + `</div>`
 }
 
 m := htmlyaml.DefaultPageMarshaler

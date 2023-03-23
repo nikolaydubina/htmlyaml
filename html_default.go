@@ -2,9 +2,9 @@ package htmlyaml
 
 import "strings"
 
-func NullHTML(k string) string { return `<div class="yaml-lang yaml-value yaml-null">null</div>` }
+func DefaultNull(k string) string { return `<div class="yaml-lang yaml-value yaml-null">null</div>` }
 
-func BoolHTML(k string, v bool) string {
+func DefaultBool(k string, v bool) string {
 	x := "false"
 	if v {
 		x = "true"
@@ -12,46 +12,45 @@ func BoolHTML(k string, v bool) string {
 	return `<div class="yaml-lang yaml-value yaml-bool">` + x + `</div>`
 }
 
-func StringHTML(k string, v string) string {
+func DefaultString(k string, v string) string {
 	return `<div class="yaml-value yaml-string">` + v + `</div>`
 }
 
-func NumberHTML(k string, v float64, s string) string {
+func DefaultNumber(k string, v float64, s string) string {
 	return `<div class="yaml-value yaml-number">` + s + `</div>`
 }
 
 var (
-	DefaultArrayDashHTML  = `<div class="yaml-lang">-&nbsp;</div>`
-	DefaultArrayEmptyHTML = `<div class="yaml-lang">&nbsp;[]</div>`
-	DefaultMapColonHTML   = `<div class="yaml-lang">:&nbsp;</div>`
-	DefaultMapEmptyHTML   = `<div class="yaml-lang">&nbsp;{}</div>`
+	DefaultArrayDash    = `<div class="yaml-lang">-&nbsp;</div>`
+	DefaultArrayEmpty   = `<div class="yaml-lang">&nbsp;[]</div>`
+	DefaultMapColon     = `<div class="yaml-lang">:&nbsp;</div>`
+	DefaultMapEmpty     = `<div class="yaml-lang">&nbsp;{}</div>`
+	DefaultPaddingSpace = `<span class="yaml-padding-space">&nbsp;</span>`
 )
 
-func DefaultMapKeyHTML(key string, v string) string {
+func DefaultMapKey(key string, v string) string {
 	return `<div class="yaml-key yaml-string">` + v + `</div>`
 }
 
-type DefaultRowHTML struct {
+type DefaultRow struct {
 	Padding int
 }
 
-var PaddingSpace = `<span class="yaml-padding-space">&nbsp;</span>`
-
-func (s DefaultRowHTML) Marshal(v string, depth int) string {
-	p := `<div class="yaml-container-padding">` + strings.Repeat(PaddingSpace, s.Padding*depth) + `</div>`
+func (s DefaultRow) Marshal(v string, depth int) string {
+	p := `<div class="yaml-container-padding">` + strings.Repeat(DefaultPaddingSpace, s.Padding*depth) + `</div>`
 	return `<div class="yaml-container-row">` + p + v + `</div>`
 }
 
 // DefaultMarshaler adds basic HTML div classes for further styling.
 var DefaultMarshaler = Marshaler{
-	Null:       NullHTML,
-	Bool:       BoolHTML,
-	String:     StringHTML,
-	Number:     NumberHTML,
-	MapKey:     DefaultMapKeyHTML,
-	ArrayDash:  DefaultArrayDashHTML,
-	ArrayEmpty: DefaultArrayEmptyHTML,
-	MapColon:   DefaultMapColonHTML,
-	MapEmpty:   DefaultMapEmptyHTML,
-	Row:        DefaultRowHTML{Padding: 2}.Marshal,
+	Null:       DefaultNull,
+	Bool:       DefaultBool,
+	String:     DefaultString,
+	Number:     DefaultNumber,
+	MapKey:     DefaultMapKey,
+	ArrayDash:  DefaultArrayDash,
+	ArrayEmpty: DefaultArrayEmpty,
+	MapColon:   DefaultMapColon,
+	MapEmpty:   DefaultMapEmpty,
+	Row:        DefaultRow{Padding: 2}.Marshal,
 }
