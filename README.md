@@ -9,6 +9,7 @@
 * no dependencies
 * no `reflect`
 * no `fmt`
+* no `text/template`, `html/template`
 * 300 LOC
 * customizable rendering
 * JSON Path for elements access
