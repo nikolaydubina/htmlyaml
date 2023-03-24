@@ -62,6 +62,8 @@ func (s *Marshaler) MarshalTo(w io.Writer, v any) error {
 	return errors.Join(s.err...)
 }
 
+// go-yaml decodes YAML numbers into different numeric Go types,
+// as opposed to encoding/json decoding always to float64.
 func (s *Marshaler) marshal(v any) {
 	if v == nil {
 		s.write(s.Null(s.key))
@@ -71,6 +73,16 @@ func (s *Marshaler) marshal(v any) {
 		s.write(s.Bool(s.key, q))
 	case string:
 		s.write(s.String(s.key, tryEscapeString(q)))
+	case int:
+		s.write(s.Number(s.key, float64(q), strconv.Itoa(q)))
+	case int64:
+		s.write(s.Number(s.key, float64(q), strconv.Itoa(int(q))))
+	case uint:
+		s.write(s.Number(s.key, float64(q), strconv.Itoa(int(q))))
+	case uint64:
+		s.write(s.Number(s.key, float64(q), strconv.Itoa(int(q))))
+	case float32:
+		s.write(s.Number(s.key, float64(q), strconv.FormatFloat(float64(q), 'f', -1, 32)))
 	case float64:
 		s.write(s.Number(s.key, q, strconv.FormatFloat(q, 'f', -1, 64)))
 	case map[string]any:
