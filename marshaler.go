@@ -19,8 +19,6 @@ import (
 // spaces are wrapped in their own div element.
 // Safe for repeated use.
 // Not safe for concurrent use.
-// TODO: string quotation check for whitespace inside strings
-// TODO: root keys start same depth when it is dict
 type Marshaler struct {
 	Null       func(key string) string
 	Bool       func(key string, v bool) string
@@ -36,6 +34,7 @@ type Marshaler struct {
 	*rowWriter
 	depth        int
 	isParentList bool
+	isRoot       bool
 	key          string
 	err          []error
 }
@@ -49,6 +48,7 @@ func (s *Marshaler) Marshal(v any) []byte {
 
 // MarshalTo converts YAML stored as Go `any` object represented into HTML.
 func (s *Marshaler) MarshalTo(w io.Writer, v any) error {
+	s.isRoot = true
 	s.depth = 0
 	s.key = "$"
 	s.rowWriter = &rowWriter{
@@ -70,7 +70,7 @@ func (s *Marshaler) marshal(v any) {
 	case bool:
 		s.write(s.Bool(s.key, q))
 	case string:
-		s.write(s.String(s.key, q))
+		s.write(s.String(s.key, tryEscapeString(q)))
 	case float64:
 		s.write(s.Number(s.key, q, strconv.FormatFloat(q, 'f', -1, 64)))
 	case map[string]any:
@@ -98,7 +98,13 @@ func (s *Marshaler) encodeArray(v []any) {
 
 	s.flush(s.depth)
 
-	s.depth = d + 1
+	if s.isRoot {
+		s.isRoot = false
+		s.depth = 0
+	} else {
+		s.depth = d + 1
+	}
+
 	s.isParentList = true
 	for i, q := range v {
 		s.key = k + "[" + strconv.Itoa(i) + "]"
@@ -126,15 +132,19 @@ func (s *Marshaler) encodeMap(v map[string]any) {
 	sort.Slice(sv, func(i, j int) bool { return sv[i].k < sv[j].k })
 
 	// write map
-	k, d := s.key, s.depth
+	k, d, r := s.key, s.depth, s.isRoot
 	defer func() { s.key, s.depth = k, d }()
 
 	if !s.isParentList {
 		s.flush(s.depth)
 	}
 
+	if s.isRoot {
+		s.isRoot = false
+	}
+
 	for i, kv := range sv {
-		if (s.isParentList && i > 0) || !s.isParentList {
+		if !r && ((s.isParentList && i > 0) || !s.isParentList) {
 			s.depth = d + 1
 		}
 

@@ -10,6 +10,12 @@ import (
 	"github.com/nikolaydubina/htmlyaml"
 )
 
+//go:embed testdata/example-array-root.json
+var exampleArrayRootJSON []byte
+
+//go:embed testdata/example-array-root.html
+var exampleArrayRootPageHTML string
+
 //go:embed testdata/example-page.html
 var examplePageHTML string
 
@@ -24,6 +30,18 @@ func TestMarshalHTML(t *testing.T) {
 
 	os.WriteFile("testdata/example-page.out.html", h, 0666)
 	if strings.TrimSpace(examplePageHTML) != strings.TrimSpace(string(h)) {
+		t.Errorf("wrong output: %s", string(h))
+	}
+}
+
+func TestMarshalHTML_ArrayRoot(t *testing.T) {
+	var v any
+	json.Unmarshal(exampleArrayRootJSON, &v)
+
+	h := htmlyaml.DefaultPageMarshaler.Marshal(v)
+
+	os.WriteFile("testdata/example-array-root.out.html", h, 0666)
+	if strings.TrimSpace(exampleArrayRootPageHTML) != strings.TrimSpace(string(h)) {
 		t.Errorf("wrong output: %s", string(h))
 	}
 }

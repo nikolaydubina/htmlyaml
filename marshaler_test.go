@@ -77,7 +77,7 @@ func TestMarshaler_JSONPath(t *testing.T) {
 		{k: "$.bookings.monday", v: true},
 		{k: "$.bookings.tuesday", v: false},
 		{k: "$.box-colors", v: "box-colors"},
-		{k: "$.box-colors[0]", v: "red"},
+		{k: "$.box-colors[0]", v: "\"red with blue stripes\""},
 		{k: "$.box-colors[1]", v: "green"},
 		{k: "$.box-sizes", v: "box-sizes"},
 		{k: "$.box-sizes[0]", v: "10"},

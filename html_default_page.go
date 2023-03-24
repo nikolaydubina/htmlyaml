@@ -52,14 +52,14 @@ func (m *PageMarshaler) MarshalTo(w io.Writer, v any) error {
 
 	if f := m.idxTitle; f > 0 {
 		w.Write(m.Template[s:f])
-		s = f + len(m.TemplateTitleKey)
 		w.Write([]byte(m.Title))
+		s = f + len(m.TemplateTitleKey)
 	}
 
 	if f := m.idxhtmlyaml; f > 0 {
 		w.Write(m.Template[s:f])
-		s = f + len(m.TemplateYAMLKey)
 		m.Marshaler.MarshalTo(w, v)
+		s = f + len(m.TemplateYAMLKey)
 	}
 
 	w.Write(m.Template[s:])
