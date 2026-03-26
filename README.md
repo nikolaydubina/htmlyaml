@@ -1,5 +1,9 @@
 ## 🐹 htmlyaml: rich rendering of YAML as HTML in Go
 
+<p align="center">
+  ✨ Sponsored by <a href="https://apps.apple.com/app/id6738306589">NDX AI Shopping Assistant</a>
+</p>
+
 [![codecov](https://codecov.io/gh/nikolaydubina/htmlyaml/branch/master/graph/badge.svg?token=yXmNdIDn8O)](https://codecov.io/gh/nikolaydubina/htmlyaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nikolaydubina/htmlyaml)](https://goreportcard.com/report/github.com/nikolaydubina/htmlyaml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/nikolaydubina/htmlyaml.svg)](https://pkg.go.dev/github.com/nikolaydubina/htmlyaml)
